@@ -8,7 +8,7 @@ from streamlit_option_menu import option_menu
 select_menu = st.sidebar
 
 with select_menu:
-    menu = option_menu('Menú principal',('Introduccion','Datos','Conclusion'))
+    menu = option_menu('Menú principal',('Introduccion','Datos','Conclusion'), menu_icon= 'justify')
 array = ny.random.randn(10, 5)
 dt = pd.DataFrame(
     array,
