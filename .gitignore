@@ -1,3 +1,5 @@
 env
 
 _pycache_
+
+.venv
