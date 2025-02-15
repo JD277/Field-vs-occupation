@@ -1,5 +1,5 @@
-env
+.venv
 
 _pycache_
-
-.venv
+env
+.streamlit
