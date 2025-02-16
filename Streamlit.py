@@ -2,10 +2,43 @@ import streamlit as st
 import pandas as pd
 import numpy as ny
 from streamlit_option_menu import option_menu
+from pandas.api.types import( is_categorical_dtype,
+    is_numeric_dtype,
+    is_object_dtype,)
 
 
 select_menu = st.sidebar
 
+def filter(df = pd.DataFrame):
+
+    filtered = st.checkbox("Filtrar datos")
+
+    if not filtered:
+        return df
+    
+    modified_container = st.container()
+
+    df = df.copy()
+
+    with modified_container:
+        columns_filter = st.multiselect("Seleccione los filtros:", df.columns)
+        for columns in columns_filter:
+            left, right = st.columns((1,21))
+
+            if is_object_dtype(df[columns]):
+                categories = right.multiselect(f"Seleccione los valores de {columns}", df[columns].unique(),default= list(df[columns].unique()))
+                df = df[df[columns].isin(categories)]
+
+            elif is_numeric_dtype(df[columns]):
+                min_value = int(df[columns].min())
+                max_value = int(df[columns].max())
+
+                slider = right.slider(f"Seleccione los valores de {columns}",
+                                      min_value, max_value, (min_value,max_value), 1)
+                
+                df = df[df[columns].between(*slider)]
+    
+    return df
 
 with select_menu:
     menu = option_menu('Field vs Occupation',('Introduccion','Datos','Conclusion'), menu_icon= 'justify', icons= ('body-text','braces','book'))
@@ -31,7 +64,7 @@ if menu == 'Introduccion':
 if menu == 'Datos':
     'Los datos usados para el estudio son los siguientes:'
     dataset = pd.read_csv('career_change_prediction_dataset.csv')
-    st.write(dataset)
+    st.dataframe(filter(dataset))
 
 if menu == 'Conclusion':
     option = st.selectbox('Seleccione el gráfico a visualizar', 
