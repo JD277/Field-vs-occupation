@@ -6,10 +6,12 @@ from pandas.api.types import( is_categorical_dtype,
     is_numeric_dtype,
     is_object_dtype,)
 
-
+#Genera un menú ocultable a la izquierda de la página
 select_menu = st.sidebar
 
+#Función que filtra los datos del dataset según los parámetros seleccionados
 def filter(df = pd.DataFrame):
+
 
     filtered = st.checkbox("Filtrar datos")
 
@@ -21,52 +23,99 @@ def filter(df = pd.DataFrame):
     df = df.copy()
 
     with modified_container:
+
+        #Permite seleccionar el criterio por el cual se quiere filtrar
         columns_filter = st.multiselect("Seleccione los filtros:", df.columns)
         for columns in columns_filter:
             left, right = st.columns((1,21))
 
+            #Permite seleccionar tags para mostrar elementos específicos en las variables cualitativas
             if is_object_dtype(df[columns]):
-                categories = right.multiselect(f"Seleccione los valores de {columns}", df[columns].unique(),default= list(df[columns].unique()))
+                categories = right.multiselect(f"Seleccione los datos deseados de {columns}", df[columns].unique(),default= list(df[columns].unique()))
                 df = df[df[columns].isin(categories)]
 
+            #Muestra un slider para seleccionar el rango númerico que se desea visualizar dentro
+            #dentro de las variables cuantitativas
             elif is_numeric_dtype(df[columns]):
                 min_value = int(df[columns].min())
                 max_value = int(df[columns].max())
 
-                slider = right.slider(f"Seleccione los valores de {columns}",
+                slider = right.slider(f"Seleccione el rango de valores de {columns}",
                                       min_value, max_value, (min_value,max_value), 1)
                 
                 df = df[df[columns].between(*slider)]
     
+    #Retorna la tabla modificada
     return df
 
+#Menú de selección dentro del menú ocultable 
 with select_menu:
-    menu = option_menu('Field vs Occupation',('Introduccion','Datos','Conclusion'), menu_icon= 'justify', icons= ('body-text','braces','book'))
+    menu = option_menu('Field of Study vs Occupation',
+                       ('Introduccion','Objetivos del estudio', 'Datos','Gráficos'), 
+                       menu_icon= 'justify', icons= ('body-text','bar-chart-steps', 'braces','book'))
     logo = st.image('UDO.png')
 
 if menu == 'Introduccion':
-    header = st.header('Los estudios en la elección de carrera', divider = 'red')
-    st.markdown('''El estudiar una carrera de cualquier índole puede que 
+    container = st.container()
+    st.title('*Análisis Exploratorio de Datos para identificar patrones clave entre los campos de estudio y las ocupaciones laborales*')
+    
+    header = st.header('Los estudios en relación a la elección de carrera', divider = 'red')
+    st.markdown('''<span style='font-size: 24px;'>El estudiar una carrera de cualquier índole puede que 
                 haga parecer predecible el area de trabajo de una persona, y si bien es así en
                 la mayoría de ocasiones, que termine trabajando en algo ligeramente/completamente
                 diferente sucede con suficiente frecuencia como para que se tenga que tomar en
-                cuenta esta posibilidad.   
+                cuenta esta posibilidad. <br />   
                 Teniendo en cuenta esto, surge la duda, ¿Qué produce este cambio entre
                 especialidad y area laboral? Esta es una pregunta para la cual no se puede declarar
                 un único culpable, puesto a que una serie de factores son los responsables de la
                 situación presentada; sin embargo, si es posible tomar estos factores y analizarlos,
                 con tal de llegar a una conclusión que satisfaga la incognita planteada.
-                Por medio del uso del dataset "Field vs Occupation" y la aplicación de las estructuras de
+                Por medio del uso del dataset **Field vs Occupation** y la aplicación de las estructuras de
                 datos adecuadas, el presente ánalisis de datos pretende llegar a una conclusión
-                satisfactoria''')
+                satisfactoria</span>''', True)
 
+if menu == 'Objetivos del estudio':
+    st.header('Objetivo General', divider = 'red')
+    st.markdown('''<span style='font-size: 24px;'>Realizar un análisis exploratorio de datos para identificar patrones clave 
+                entre los campos de estudio y las ocupaciones laborales, con el fin de evaluar 
+                la eficacia del sistema de selección para estudios superiores y proponer 
+                mejoras que permitan de una manera eficiente otorgar oportunidades educativas.</span>''', True)
+    
+    st.header('Objetivos Específicos', divider= 'red')
+    objectives = ['',
+                  '''Conocer la estructura del dataset **Field of Study vs Occupation**, 
+                  identificando sus variables clave y comprendiendo su relevancia para el análisis.''',
+                  '''Analizar la distribución de los campos de estudio para identificar 
+                  patrones de popularidad y representatividad en la población estudiada.''',
+                  '''Relacionar los campos de estudio con las ocupaciones laborales, 
+                  evaluando la concordancia entre ambas dimensiones.''',
+                  '''Interpretar las diferencias en los ingresos según campo de estudio y ocupación, 
+                  destacando posibles disparidades significativas.''',
+                  '''Evaluar las tasas de empleabilidad asociadas a diferentes campos de estudio, 
+                  identificando áreas con mayor o menor demanda laboral.''',
+                  '''Crear visualizaciones que resuman de manera clara y efectiva los hallazgos del EDA, 
+                  facilitando su comprensión e interpretación.''',
+                  '''Justificar la necesidad de mejorar los sistemas de selección en estudios superiores 
+                  a partir de los patrones observados en el análisis.''']
+    
+    s = ' '
+
+    for text in objectives:
+        if text != '':
+            s += '\n- ' + text + '\n'
+        else:
+            s += '\n'
+
+    st.markdown(f'''<span style='font-size: 24px;'>{s}</span>''', True)
 
 if menu == 'Datos':
-    'Los datos usados para el estudio son los siguientes:'
+    st.header('Los datos de :red[Field of Study vs Occupation]', divider= 'red',
+               help= 'Si desea buscar algún dato en particular, presione la confirmación de "Filtrar datos"')
     dataset = pd.read_csv('career_change_prediction_dataset.csv')
     st.dataframe(filter(dataset))
 
-if menu == 'Conclusion':
+if menu == 'Gráficos':
+    st.header("Resultados del análisis", divider= 'red')
     option = st.selectbox('Seleccione el gráfico a visualizar', 
                           ['Campo de estudio', 'Ocupación', 'Edades', 'Genero', 'Años de experiencia',
                            'Nivel de educación','Tasa de crecimiento profesional', 'Satisfacción laboral',
