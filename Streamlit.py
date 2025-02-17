@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as ny
+import test_model as tm
 from streamlit_option_menu import option_menu
 from pandas.api.types import( is_categorical_dtype,
     is_numeric_dtype,
@@ -8,6 +9,7 @@ from pandas.api.types import( is_categorical_dtype,
 
 #Genera un menú ocultable a la izquierda de la página
 select_menu = st.sidebar
+
 
 #Función que filtra los datos del dataset según los parámetros seleccionados
 def filter(df = pd.DataFrame):
@@ -69,10 +71,10 @@ if menu == 'Introduccion':
                 especialidad y area laboral? Esta es una pregunta para la cual no se puede declarar
                 un único culpable, puesto a que una serie de factores son los responsables de la
                 situación presentada; sin embargo, si es posible tomar estos factores y analizarlos,
-                con tal de llegar a una conclusión que satisfaga la incognita planteada.
-                Por medio del uso del dataset **Field vs Occupation** y la aplicación de las estructuras de
-                datos adecuadas, el presente ánalisis de datos pretende llegar a una conclusión
-                satisfactoria</span>''', True)
+                con tal de llegar a una conclusión que satisfaga la incognita planteada. <br />  
+                Por medio del uso del dataset **Field of Study vs Occupation** y la aplicación de las estructuras de
+                datos adecuadas, se realizará un análisis de datos exploratorio (EDA) de forma que se logre
+                contestar la pregunta.</span>''', True)
 
 if menu == 'Objetivos del estudio':
     st.header('Objetivo General', divider = 'red')
@@ -83,6 +85,7 @@ if menu == 'Objetivos del estudio':
     
     st.header('Objetivos Específicos', divider= 'red')
     objectives = ['',
+                  '''Darle un uso práctico a las estructuras de datos, con tal de observar su utilidad.''',
                   '''Conocer la estructura del dataset **Field of Study vs Occupation**, 
                   identificando sus variables clave y comprendiendo su relevancia para el análisis.''',
                   '''Analizar la distribución de los campos de estudio para identificar 
@@ -111,11 +114,21 @@ if menu == 'Objetivos del estudio':
 if menu == 'Datos':
     st.header('Los datos de :red[Field of Study vs Occupation]', divider= 'red',
                help= 'Si desea buscar algún dato en particular, presione la confirmación de "Filtrar datos"')
+    st.markdown('''<span style='font-size: 24px;'>Para poder realizar el estudio optimo de los datos,
+                se optó por utilizar las librerías _Streamlit_ y _Pandas_; la primera
+                con tal de poder recoger y analizar los datos (además de darles representación a través de gráficas),
+                y la segunda con la intención de mostrar el dataset de una forma llamativa y 
+                poder utilizar los filtros que se desee. <br />  
+                De forma que se puedan usar de manera optima ambas librerías, se optó por almacenar
+                los datos a través de listas; esto no solo se debe a la capacidad de esta estructura
+                de cambiar de tamaño dinamicamente, sino que también por el uso extenso de estas como
+                parametro de multiples de sus funciones, haciendola preferible ante sus competidores.</span>''',True)
     dataset = pd.read_csv('career_change_prediction_dataset.csv')
     st.dataframe(filter(dataset))
 
 if menu == 'Gráficos':
     st.header("Resultados del análisis", divider= 'red')
+    st.markdown()
     option = st.selectbox('Seleccione el gráfico a visualizar', 
                           ['Campo de estudio', 'Ocupación', 'Edades', 'Genero', 'Años de experiencia',
                            'Nivel de educación','Tasa de crecimiento profesional', 'Satisfacción laboral',
@@ -188,8 +201,54 @@ if menu == 'Gráficos':
         case 'Adopcion de la tecnologia':
             st.image("Graphs/Adopcion_de_la_tecnologia.png")
 
+if menu == 'Determinación de trabajos futuros':
+
+    model = tm.Model('tf')
+
+    st.header('Un modelo que permite predecir la carrera', divider= 'red')
+    st.markdown('''<span style='font-size: 24px;'>Gracias al estudio del dataset y 
+                las tablas realizadas a partir
+                de este, se logró crear un modelo de **Inteligencia Artificial** que, tras un
+                entrenamiento previo, logra determinar la profesión que una persona tendrá según
+                el valor/dato ingresado dentro de cada variable. <br />  
+                El modelo funciona de la siguiente forma: recibe una serie de datos (aquellos
+                presentados en el dataset) y devuelve una respuesta afirmativa/negativa
+                en cuanto al cambio de carrera.</span>''', True)
+    
+    variables = []
+        
+    variables.append(st.selectbox('Seleccione el area de estudio:', tm.field_of_study_mapping))#0
+    variables.append(st.selectbox('Seleccione la ocupación:', tm.current_occupation_mapping))#1
+    variables.append(st.number_input('Seleccione su edad:', min_value= 0, max_value= 120, step= 1,value= 20))
+    variables.append(st.selectbox('Seleccione el genero:', tm.gender_mapping))#3
+    variables.append(st.number_input('Seleccione los años de experiencia:', min_value= 0, max_value= 120, step= 1,value= 20))
+    variables.append(st.selectbox('Seleccione el nivel de educación:', tm.education_mapping))#5
+    variables.append(st.selectbox('Seleccione la tasa de crecimiento:', tm.industry_growth_mapping))#6
+    variables.append(st.number_input('Seleccione la satisfacción laboral:', min_value= 1, max_value= 10, step= 1,value= 5))#7
+    variables.append(st.number_input('Seleccione el balance entre trabajo y vida personal:', min_value= 1, max_value= 10, step= 1,value= 5))#8
+    variables.append(st.number_input('Seleccione las oportunidades laborales:', min_value= 0, step= 1,value= 5))#9
+    variables.append(st.number_input('Seleccione su salario:', min_value= 0, step= 1,value= 5))#10   
+    variables.append(st.number_input('Seleccione la seguridad laboral:', min_value= 1, max_value= 10, step= 1,value= 5))#11   
+    variables.append(st.number_input('Seleccione su interés en cambiar de carrera:', min_value= 1, max_value= 10, step= 1,value= 5))#12   
+    variables.append(st.number_input('Seleccione la brecha de habilidades:', min_value= 1, max_value= 10, step= 1,value= 5))#13   
+    variables.append(st.selectbox('Seleccione la influencia familiar:', tm.family_influence_mapping))#14
+    variables.append(st.selectbox('Seleccione si tiene mentoria:', [True, False]))#15
+    variables.append(st.selectbox('Seleccione si tiene certificaciones:', [True, False]))#16   
+    variables.append(st.selectbox('Seleccione si tiene experiencia de freelancing:', [True, False]))#17
+    variables.append(st.selectbox('Seleccione si tiene movilidad geográfica:', [True, False]))#18
+    variables.append(st.number_input('Seleccione el número de redes profesionales:', min_value= 1, max_value= 10, step= 1,value= 5))#19
+    variables.append(st.number_input('Seleccione el número de cambios de carrera:', min_value= 0, max_value= 2, step= 1,value= 1))#20
+    variables.append(st.number_input('Seleccione la adopción a la tecnología:', min_value= 1, max_value= 10, step= 1,value= 5))#21   
+    
+    test = model.predict(variables[0], variables[1], variables[2], variables[3], variables[4],
+                  variables[5], variables[6], variables[7], variables[8], variables[9],
+                  variables[10], variables[11], variables[12], variables[13], variables[14],
+                  variables[15], variables[16], variables[17],variables[18],variables[19],
+                  variables[20], variables[21])
+    button = st.button('''Predecir''', on_click=  st.markdown(test))
+   
+    
     
 
-    
-    
+
    
