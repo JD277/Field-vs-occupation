@@ -53,8 +53,8 @@ def filter(df = pd.DataFrame):
 #Menú de selección dentro del menú ocultable 
 with select_menu:
     menu = option_menu('Field of Study vs Occupation',
-                       ('Introduccion','Objetivos del estudio', 'Datos','Gráficos'), 
-                       menu_icon= 'justify', icons= ('body-text','bar-chart-steps', 'braces','book'))
+                       ('Introduccion','Objetivos del estudio', 'Datos','Gráficos', 'Conclusiones'), 
+                       menu_icon= 'justify', icons= ('body-text','bar-chart-steps', 'braces','book', 'journal-check'))
     logo = st.image('UDO.png')
 
 if menu == 'Introduccion':
@@ -202,54 +202,22 @@ if menu == 'Gráficos':
         case 'Adopcion de la tecnologia':
             st.image("Graphs/Adopcion_de_la_tecnologia.png")
 
-if menu == 'Determinación de trabajos futuros':
-
-    model = tm.Model('tf')
-
-    st.header('Un modelo que permite predecir la carrera', divider= 'red')
-    st.markdown('''<span style='font-size: 24px;'>Gracias al estudio del dataset y 
-                las tablas realizadas a partir
-                de este, se logró crear un modelo de **Inteligencia Artificial** que, tras un
-                entrenamiento previo, logra determinar la profesión que una persona tendrá según
-                el valor/dato ingresado dentro de cada variable. <br />  
-                El modelo funciona de la siguiente forma: recibe una serie de datos (aquellos
-                presentados en el dataset) y devuelve una respuesta afirmativa/negativa
-                en cuanto al cambio de carrera.</span>''', True)
-    
-    variables = []
-        
-    variables.append(st.selectbox('Seleccione el area de estudio:', tm.field_of_study_mapping))#0
-    variables.append(st.selectbox('Seleccione la ocupación:', tm.current_occupation_mapping))#1
-    variables.append(st.number_input('Seleccione su edad:', min_value= 0, max_value= 120, step= 1,value= 20))
-    variables.append(st.selectbox('Seleccione el genero:', tm.gender_mapping))#3
-    variables.append(st.number_input('Seleccione los años de experiencia:', min_value= 0, max_value= 120, step= 1,value= 20))
-    variables.append(st.selectbox('Seleccione el nivel de educación:', tm.education_mapping))#5
-    variables.append(st.selectbox('Seleccione la tasa de crecimiento:', tm.industry_growth_mapping))#6
-    variables.append(st.number_input('Seleccione la satisfacción laboral:', min_value= 1, max_value= 10, step= 1,value= 5))#7
-    variables.append(st.number_input('Seleccione el balance entre trabajo y vida personal:', min_value= 1, max_value= 10, step= 1,value= 5))#8
-    variables.append(st.number_input('Seleccione las oportunidades laborales:', min_value= 0, step= 1,value= 5))#9
-    variables.append(st.number_input('Seleccione su salario:', min_value= 0, step= 1,value= 5))#10   
-    variables.append(st.number_input('Seleccione la seguridad laboral:', min_value= 1, max_value= 10, step= 1,value= 5))#11   
-    variables.append(st.number_input('Seleccione su interés en cambiar de carrera:', min_value= 1, max_value= 10, step= 1,value= 5))#12   
-    variables.append(st.number_input('Seleccione la brecha de habilidades:', min_value= 1, max_value= 10, step= 1,value= 5))#13   
-    variables.append(st.selectbox('Seleccione la influencia familiar:', tm.family_influence_mapping))#14
-    variables.append(st.selectbox('Seleccione si tiene mentoria:', [True, False]))#15
-    variables.append(st.selectbox('Seleccione si tiene certificaciones:', [True, False]))#16   
-    variables.append(st.selectbox('Seleccione si tiene experiencia de freelancing:', [True, False]))#17
-    variables.append(st.selectbox('Seleccione si tiene movilidad geográfica:', [True, False]))#18
-    variables.append(st.number_input('Seleccione el número de redes profesionales:', min_value= 1, max_value= 10, step= 1,value= 5))#19
-    variables.append(st.number_input('Seleccione el número de cambios de carrera:', min_value= 0, max_value= 2, step= 1,value= 1))#20
-    variables.append(st.number_input('Seleccione la adopción a la tecnología:', min_value= 1, max_value= 10, step= 1,value= 5))#21   
-    
-    test = model.predict(variables[0], variables[1], variables[2], variables[3], variables[4],
-                  variables[5], variables[6], variables[7], variables[8], variables[9],
-                  variables[10], variables[11], variables[12], variables[13], variables[14],
-                  variables[15], variables[16], variables[17],variables[18],variables[19],
-                  variables[20], variables[21])
-    button = st.button('''Predecir''', on_click=  st.markdown(test))
-   
-    
-    
-
-
-   
+if menu == 'Conclusiones':
+    st.header('Respuesta a la incognita',divider= 'red')
+    st.markdown('''<span style='font-size: 24px;'>Por medio de la agrupación, análisis y la representación 
+                gráfica de los datos propuestos,se han revelado factores clave que influyen en el cambio ocupacional, 
+                dentro de estos destacando: <br />  
+                - Satisfacción laboral: Muestra una relación directa con la propensión al cambio, 
+                siendo los niveles más bajos de satisfacción los que presentan una mayor probabilidad 
+                de cambiar de ocupación.<br />  
+                - Interés en cambiar de carrera: Siendo autoexplicativa, las personas que desean
+                un cambio de especialidad fueron más propensas a realizarlo.<br />  
+                - Salario: Uno de los principales motivos por los cuales se elige un trabajo particular,
+                las personas con un salario menor al promedio presentaron tendencia a cambiar de carrera,
+                funcionando como mayor ejemplo el grupo dentro del menor rango monetario (con una tasa de cambio
+                del 100%) <br />  
+                Estos hallazgos sugieren que el sistema de selección para estudios superiores podría beneficiarse de un enfoque 
+                más integral, que considere estas variables en la orientación vocacional y profesional. <br />  
+                Identificar las necesidades individuales y garantizar una mejor alineación entre los campos de estudio, 
+                las habilidades requeridas en el mercado laboral y las expectativas personales puede reducir la probabilidad 
+                de cambios ocupacionales, optimizando así las oportunidades educativas.</p>''', True)
