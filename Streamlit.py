@@ -128,7 +128,8 @@ if menu == 'Datos':
 
 if menu == 'Gráficos':
     st.header("Resultados del análisis", divider= 'red')
-    st.markdown()
+    st.markdown('''<span style='font-size: 24px;'>Posterior al análisis realizado, se pueden observar las
+                gráficas resultantes, a través de las cuales se llegarán a las respectivas conclusiones.</span>''',True)
     option = st.selectbox('Seleccione el gráfico a visualizar', 
                           ['Campo de estudio', 'Ocupación', 'Edades', 'Genero', 'Años de experiencia',
                            'Nivel de educación','Tasa de crecimiento profesional', 'Satisfacción laboral',
